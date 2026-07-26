@@ -331,7 +331,7 @@ body::before {
 
 /* KPI bar */
 .kpi-strip {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  display: grid; grid-template-columns: repeat(8, minmax(0, 1fr));
   gap: 1px; background: var(--line);
   border: 1px solid var(--line); border-radius: var(--r-lg);
   overflow: hidden; margin-top: 48px;
@@ -715,7 +715,7 @@ body::before {
   .kpi-strip { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 600px) {
-  .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+  .kpi-strip { grid-template-columns: 1fr; }
   .promo-bar { gap: 8px; }
   .promo-input { width: 140px; }
   .access-badge { display: none; }
@@ -890,7 +890,7 @@ body::before {
 <div class="promo-bar">
   <div class="promo-label" data-ru="🔐 Код доступа:" data-en="🔐 Access code:">🔐Уровень доступа:</div>
   <div class="promo-input-wrap">
-    <input class="promo-input" type="text" id="promoInput" placeholder="ВВЕДИТЕ КОД" maxlength="20" autocomplete="off">
+    <input class="promo-input" type="text" id="promoInput" placeholder="ВВЕДИТЕ КОД" maxlength="40" autocomplete="off">
     <button class="promo-btn" onclick="applyPromo()" data-ru="ПРИМЕНИТЬ" data-en="UNLOCK">ПРИМЕНИТЬ</button>
     <a class="promo-btn" href="#" onclick="scrollToContacts(event)" style="background: transparent; border-color: var(--muted); color: var(--ghost); text-decoration: none; padding: 6px 14px; border-radius: 6px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 5px; transition: 0.2s;" onmouseover="this.style.borderColor=&#39;var(--cyan)&#39;;this.style.color=&#39;var(--cyan)&#39;" onmouseout="this.style.borderColor=&#39;var(--muted)&#39;;this.style.color=&#39;var(--ghost)&#39;" data-ru="↓ ПОЛУЧИТЬ" data-en="↓ GET">↓ ПОЛУЧИТЬ</a>
   </div>
@@ -1408,6 +1408,11 @@ body::before {
         <div><span style="color:var(--blue);font-family:var(--font-mono)">04 /</span> <span data-ru="Разрешительная документация и уникальность продукта" data-en="Permits, licenses, product uniqueness">Разрешительная документация и уникальность продукта</span></div>
         <div><span style="color:var(--blue);font-family:var(--font-mono)">05 /</span> <span data-ru="Решение: формат сотрудничества и следующий шаг" data-en="Decision: cooperation format &amp; next step">Решение: формат сотрудничества и следующий шаг</span></div>
       </div>
+
+      <div style="margin-top:18px;padding-top:16px;border-top:1px dashed rgba(59,130,246,.25);text-align:center">
+        <a href="#" onclick="scrollToContacts(event)" class="cta-btn cta-btn-primary" style="font-size:12px;padding:9px 22px;text-decoration:none;display:inline-flex;align-items:center;gap:6px" data-ru="📝 Заполнить бриф →" data-en="📝 Fill out the brief →">📝 Заполнить бриф →</a>
+        <div style="font-size:11px;color:var(--dim);max-width:640px;margin:12px auto 0;line-height:1.65" data-ru="Данные настоящего отчёта собраны и построены по открытым источникам. Всю экономику, сроки, перспективы и аналитику товарного направления можно настроить более тонко и точно, заполнив бриф по ссылке. Фокус-данные значительно сэкономят время, конкретизируют цифры и сделают диалог более конструктивным." data-en="This report is built on open-source data. The economics, timelines, prospects and product-line analytics can be tuned more precisely by filling out a brief via the link. Focused inputs save time, sharpen the numbers, and make the conversation more productive.">Данные настоящего отчёта собраны и построены по открытым источникам. Всю экономику, сроки, перспективы и аналитику товарного направления можно настроить более тонко и точно, заполнив бриф по ссылке. Фокус-данные значительно сэкономят время, конкретизируют цифры и сделают диалог более конструктивным.</div>
+      </div>
     </div>
 
     <!-- КОНТАКТЫ с телефоном -->
@@ -1500,14 +1505,14 @@ const LEVEL_NUM = { guest: 0, preview: 1, vip: 2, full: 3 };
 // v2.9 БИЛИНГВАЛЬНЫЙ ПАКЕТ: каждая секция — объект {ru,en}, не строка.
 // doDownload() выбирает нужный файл по currentLang. См. SKILL_init-import ШАГ 9.19.
 const FILE_URLS_PREVIEW = {
-  markets:  { ru: 'markets_final.html',     en: 'markets_final_EN.html' },
-  calendar: { ru: 'exhibitions_final.html', en: 'exhibitions_final_EN.html' },
+  markets:  { ru: 'mkt-95e1.pdf',     en: 'mkt-95e1.pdf' },
+  calendar: { ru: 'cal-95e1.pdf', en: 'cal-95e1.pdf' },
 };
 const FILE_URLS_VIP = {
   // FIX: было 'importers_final.html' — файла с таким именем не существует,
   // реальный файл базы поставщиков — exporters_final.html (см. FILE_NAMES ниже).
-  importers: { ru: 'exporters_final.html', en: 'exporters_final_EN.html' },
-  strategy:  { ru: 'strategy_final.html',  en: 'strategy_final_EN.html' },
+  importers: { ru: 'imp-95e1.pdf', en: 'imp-95e1.pdf' },
+  strategy:  { ru: 'str-95e1.pdf',  en: 'str-95e1.pdf' },
 };
 // Полные URL — собираются динамически только после разблокировки
 let FILE_URLS = {};
@@ -1669,6 +1674,13 @@ function applyAccess() {
 
   // 2. FULL / VIP — smooth blur removal
   if (lvl >= 2) {
+    document.querySelectorAll('.blur-content[data-blur]').forEach(el => {
+      el.style.transition = 'filter 0.6s ease';
+      el.style.filter = 'blur(0px)';
+      el.style.userSelect = ''; el.style.pointerEvents = '';
+      el.removeAttribute('data-blur');
+      setTimeout(() => { el.style.filter = ''; el.style.transition = ''; }, 700);
+    });
     document.querySelectorAll('*').forEach(el => {
       const s = el.style;
       if (s.filter && s.filter.includes('blur')) {
