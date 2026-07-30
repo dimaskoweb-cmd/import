@@ -473,13 +473,28 @@ const DOWNLOAD_RULES = {
 };
 const LEVEL_NUM = { guest: 0, preview: 1, vip: 2, full: 3 };
 
-const FILE_URLS_PREVIEW = { markets: 'markets_final.html', calendar: 'cal-13d5.pdf' };
-const FILE_URLS_VIP     = { importers: 'exporters_final.html', strategy: 'strategy_final.html' };
+let FILE_URLS_PREVIEW = {};
+let FILE_URLS_VIP = {};
 let FILE_URLS = {};
 const FILE_NAMES = {
-  markets: 'markets_final.html', calendar: 'exhibitions_final.html',
-  importers: 'exporters_final.html', strategy: 'strategy_final.html',
+  markets: 'Анализ рынков', calendar: 'Календарь выставок',
+  importers: 'База поставщиков', strategy: 'Стратегия снабжения',
 };
+
+// Реальные имена файлов на деплое (обфусцированные, меняются при каждой
+// заливке) читаем из config.json рядом с index.html — не хардкодим,
+// чтобы не рассинхронизироваться с тем, что реально загружено в репозиторий.
+async function loadConfig() {
+  try {
+    const res = await fetch('config.json', { cache: 'no-store' });
+    if (res.ok) {
+      const cfg = await res.json();
+      FILE_URLS_PREVIEW = cfg.preview || {};
+      FILE_URLS_VIP = cfg.vip || {};
+      applyAccess();
+    }
+  } catch (e) { /* config.json недоступен — кнопки останутся заблокированы до перезагрузки страницы */ }
+}
 
 let currentAccess = 'guest';
 
@@ -596,7 +611,7 @@ function showTab(id, btn, prefix) {
   if (target) target.classList.add('act');
 }
 
-document.addEventListener('DOMContentLoaded', () => { updateDownloads(); });
+document.addEventListener('DOMContentLoaded', () => { loadConfig(); updateDownloads(); });
 </script>
 </body>
 </html>
